@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
+const serverless = require("serverless-http");
+
+const router = express.Router();
 
 const app = express();
 app.use(bodyParser.json());
@@ -89,7 +92,12 @@ app.post('/api/appointments', (req, res) => {
   res.status(201).json({ message: 'Appointment booked successfully' });
 });
 
+app.use(`/.netlify/functions/api`, router);
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports.handler = serverless(app);
